@@ -1,0 +1,214 @@
+{% extends 'main/base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+  <link href="{% static 'css/index.css' %}" rel="stylesheet">
+{% endblock extra_css %}
+<style>
+    .student-photo {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+</style>
+{% block content %}
+    <div class="pagetitle">
+        <h1>Student Directory</h1>
+        <nav>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+            <li class="breadcrumb-item active">Students List</li>
+        </ol>
+    </div><!-- End Page Title -->
+
+    <section class="section dashboard">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Registered students</h5>
+
+                        <!-- Search Form -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <form method="get" class="d-flex">
+                                    <input type="text" name="search" class="form-control me-2" placeholder="Search by name or level..." value="{{ search_query }}">
+                                    <button type="submit" class="btn btn-outline-primary">
+                                        <i class="bi bi-search"></i>
+                                    </button>
+                                    {% if search_query %}
+                                        <a href="{% url 'students:student_list' %}" class="btn btn-outline-secondary ms-2">
+                                            <i class="bi bi-x"></i>
+                                        </a>
+                                    {% endif %}
+                                </form>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <a href="{% url 'students:student_create' %}" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i>Add New Student
+                                </a>
+                            </div>
+                        </div>
+
+                        {% if search_query %}
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                Showing results for "{{ search_query }}" ({{ page_obj.paginator.count }} result{{ page_obj.paginator.count|pluralize }})
+                            </div>
+                        {% endif %}
+                        <table class="table table-striped aligh-middle">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Gender</th>
+                                    <th>Academic Level</th>
+                                    <th>Age</th>
+                                    <th>Enrollment</th>
+                                    <th>Actions</th>
+                                </tr>
+                               
+                            </thead>
+                            <tbody>
+                                {% for student in page_obj %}
+                                <tr>
+                                    <td>{{ forloop.counter|add:page_obj.start_index|add:-1 }}</td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            
+                                                {% if student.photo %}
+                                                    <img src="{{ student.photo.url }}" alt="{{ student.first_name }} " class="student-photo">
+                                                {% else %}
+                                                    <img src="{% static 'img/student-img.jpg' %}" alt="Default Profile" class="student-photo">
+                                                {% endif %}
+                                            <div class="ms-3">
+                                                <h6 class="mb-0">
+                                                    {{student.first_name}} {{student.last_name}}
+                                                </h6>
+                                                
+                                            </div>
+                                              
+                                            
+                                </div>
+                                    </td>
+                                    <td>{{student.get_gender_display}}</td>
+                                    <td>{{student.current_academic_level}}</td>
+                                    <td>{{student.get_age}}</td>
+                                    <td>
+                                        {% if student.enrollment_status == 'active' %}
+                                            <span class="badge bg-success">{{student.get_enrollment_status_display}}</span>
+                                        {% elif student.enrollment_status == 'graduated' %}
+                                            <span class="badge bg-warning ">{{student.get_enrollment_status_display}}</span>
+                                        {% elif student.enrollment_status == 'dismissed' %}
+                                            <span class="badge bg-danger">{{student.get_enrollment_status_display}}</span>
+                                        {% elif student.enrollment_status == 'transferred' %}
+                                            <span class="badge bg-secondary">{{student.get_enrollment_status_display}}</span>
+                                        {% endif %}
+                                    </td>
+                                    
+                                    <td>
+                                        <a href="{% url 'students:student_detail' student.pk %}" class="btn btn-sm btn-primary me-1">
+                                            <i class="bi bi-eye"></i>View
+                                        </a>
+                                        <a href="{% url 'students:student_edit' student.pk %}" class="btn btn-sm btn-warning me-1">
+                                            <i class="bi bi-pencil"></i>Edit
+                                        </a>
+                                        <a href="" class="btn btn-sm btn-danger me-1" data-bs-toggle='modal' data-bs-target='#deletestudent{{ student.pk}}'>
+                                            <i class="bi bi-trash"></i>Delete
+                                        </a>
+                                    </td> 
+                                </tr>
+                                {% empty %}
+
+                                 <tr>
+                                    <td colspan="8" class="text-center">No students found.</td>
+                                </tr>
+
+                                {%endfor%}
+                            </tbody>
+                        </table>
+
+                        <!-- Pagination -->
+                        {% if is_paginated %}
+                        <nav aria-label="Student list pagination" class="mt-3">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page=1">
+                                            <i class="bi bi-chevron-double-left"></i>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                {% for num in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == num %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ num }}</span>
+                                        </li>
+                                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ num }}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ page_obj.next_page_number }}">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}page={{ page_obj.paginator.num_pages }}">
+                                            <i class="bi bi-chevron-double-right"></i>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+ {% for student in page_obj %}
+<div class="modal" tabindex="-1" id="deletestudent{{ student.pk}}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="text-center mb-3">
+            <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+            <p>Are you sure you want to delete {{ student.first_name }} {{ student.last_name }}?</p>
+        </div>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <form action="{% url 'students:student_delete' student.pk %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete student</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{%endfor%}
+
+{% endblock content %}
+
+{% block extra_scripts %}
+{% endblock extra_scripts %}

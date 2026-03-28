@@ -1,0 +1,119 @@
+{% extends 'main/base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .login-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        overflow: hidden;
+        max-width: 400px;
+        width: 100%;
+    }
+    .login-header {
+        background: #0d6efd;
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+    .login-body {
+        padding: 2rem;
+    }
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+    .btn-login {
+        background: #0d6efd;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .btn-login:hover {
+        background: #0b5ed7;
+        transform: translateY(-1px);
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-card">
+        <div class="login-header">
+            <img src="{% static 'img/logo.png' %}" alt="AcademiX" style="height: 50px; margin-bottom: 1rem;">
+            <h3>AcademiX</h3>
+            <p>Student Management System</p>
+        </div>
+        <div class="login-body">
+            <h4 class="text-center mb-4">Sign In</h4>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <strong>Error:</strong> Please check your username and password.
+                </div>
+            {% endif %}
+
+            {% if next %}
+                <div class="alert alert-info">
+                    <strong>Note:</strong> You need to sign in to access this page.
+                </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="text-danger small">{{ form.username.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <div class="text-danger small">{{ form.password.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                    <label class="form-check-label" for="remember">Remember me</label>
+                </div>
+
+                <button type="submit" class="btn btn-login w-100">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                </button>
+            </form>
+
+            <div class="text-center mt-3">
+                <small class="text-muted">
+                    Don't have an account? Contact your administrator.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_scripts %}
+<script>
+    // Add focus to username field on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('id_username').focus();
+    });
+</script>
+{% endblock extra_scripts %}
