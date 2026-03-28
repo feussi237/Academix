@@ -1,0 +1,159 @@
+{% extends 'main/base.html' %}
+
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .profile-header-user {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+    .avatar-display {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+</style>
+{% endblock extra_css %}
+
+{% block content %}
+    <div class="pagetitle">
+        <h1>My Profile</h1>
+        <nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Dashboard</a></li>
+                <li class="breadcrumb-item active">My Profile</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="profile-header-user">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <div class="avatar-display">
+                    <i class="bi bi-person"></i>
+                </div>
+            </div>
+            <div class="col">
+                <h2 class="mb-1">{{ user.get_full_name|default:user.username }}</h2>
+                <p class="mb-0 opacity-75">Administrator Account</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0"><i class="bi bi-person-fill me-2"></i>Account Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>Username:</strong></p>
+                            <p class="text-muted">{{ user.username }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Email:</strong></p>
+                            <p class="text-muted">{{ user.email|default:"Not set" }}</p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <p><strong>First Name:</strong></p>
+                            <p class="text-muted">{{ user.first_name|default:"Not set" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Last Name:</strong></p>
+                            <p class="text-muted">{{ user.last_name|default:"Not set" }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Account Created:</strong></p>
+                            <p class="text-muted">{{ user.date_joined|date:"F j, Y H:i" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Last Login:</strong></p>
+                            <p class="text-muted">{{ user.last_login|date:"F j, Y H:i"|default:"Never" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0"><i class="bi bi-shield-check me-2"></i>Account Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Status:</strong></p>
+                            {% if user.is_active %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inactive</span>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Admin Access:</strong></p>
+                            {% if user.is_superuser %}
+                                <span class="badge bg-danger">Superuser</span>
+                            {% elif user.is_staff %}
+                                <span class="badge bg-warning">Staff</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Regular User</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0"><i class="bi bi-lightning me-2"></i>Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'core:user-settings' %}" class="btn btn-primary">
+                            <i class="bi bi-gear me-2"></i>Edit Settings
+                        </a>
+                        <a href="{% url 'core:dashboard' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0"><i class="bi bi-info-circle me-2"></i>Help</h5>
+                </div>
+                <div class="card-body">
+                    <p class="small text-muted">
+                        To change your password, use the account settings page. 
+                        For additional support, contact your system administrator.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block extra_scripts %}
+{% endblock extra_scripts %}

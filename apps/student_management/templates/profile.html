@@ -68,6 +68,58 @@
     .modal-header.bg-danger {
         background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
     }
+    .photo-display {
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .photo-display:hover {
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        transform: scale(1.02);
+    }
+    .photo-display img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+    .photo-placeholder {
+        font-size: 4rem;
+        color: #ccc;
+    }
+    .photo-controls {
+        position: absolute;
+        bottom: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.5);
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        color: white;
+        font-size: 0.85rem;
+    }
+    .fullscreen-modal .modal-dialog {
+        max-width: 90%;
+        height: 90vh;
+    }
+    .fullscreen-modal .modal-body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        background: #000;
+    }
+    .fullscreen-modal .modal-body img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
 </style>
 {% endblock extra_css %}
 
@@ -117,6 +169,26 @@
 
         <div class="row">
             <div class="col-md-8">
+                <!-- Photo Display Card -->
+                <div class="card info-card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-image me-2"></i>Student Photo</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        {% if student.photo %}
+                            <img src="{{ student.photo.url }}" alt="{{ student.first_name }}" class="photo-display" id="photoImg">
+                            <p class="mt-3 text-muted small">
+                                <i class="bi bi-search me-1"></i>Click image to enlarge
+                            </p>
+                        {% else %}
+                            <div class="photo-placeholder">
+                                <i class="bi bi-image"></i>
+                            </div>
+                            <p class="mt-3 text-muted">No photo uploaded</p>
+                        {% endif %}
+                    </div>
+                </div>
+
                 <!-- Personal Information Card -->
                 <div class="card info-card mb-4">
                     <div class="card-header">
@@ -318,6 +390,29 @@
         </div>
     </div>
 
+    <!-- Photo Modal -->
+    {% if student.photo %}
+    <div class="modal fade" id="photoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title"><i class="bi bi-image me-2"></i>{{ student.first_name }} {{ student.last_name }} - Photo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="{{ student.photo.url }}" alt="{{ student.first_name }}" style="max-width: 100%; max-height: 500px; object-fit: contain;">
+                </div>
+                <div class="modal-footer">
+                    <a href="{{ student.photo.url }}" download class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-download me-2"></i>Download
+                    </a>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1">
         <div class="modal-dialog">
@@ -346,4 +441,17 @@
 {% endblock content %}
 
 {% block extra_scripts %}
+<script>
+    // Photo modal trigger
+    document.addEventListener('DOMContentLoaded', function() {
+        const photoImg = document.getElementById('photoImg');
+        if (photoImg) {
+            photoImg.style.cursor = 'pointer';
+            photoImg.addEventListener('click', function() {
+                const photoModal = new bootstrap.Modal(document.getElementById('photoModal'));
+                photoModal.show();
+            });
+        }
+    });
+</script>
 {% endblock extra_scripts %}

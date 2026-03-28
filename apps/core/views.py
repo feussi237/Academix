@@ -24,3 +24,34 @@ def index(request):
         'recent_students': recent_students,
     }
     return render(request, 'main/index.html', context)
+
+@login_required
+def user_profile(request):
+    """Display current user's profile"""
+    context = {
+        'user': request.user,
+    }
+    return render(request, 'registration/user_profile.html', context)
+
+@login_required
+def user_settings(request):
+    """Display and handle user account settings"""
+    if request.method == 'POST':
+        # Handle settings update
+        user = request.user
+        user.first_name = request.POST.get('first_name', user.first_name)
+        user.last_name = request.POST.get('last_name', user.last_name)
+        user.email = request.POST.get('email', user.email)
+        user.save()
+        
+        context = {
+            'user': user,
+            'message': 'Settings updated successfully!',
+            'message_type': 'success',
+        }
+    else:
+        context = {
+            'user': request.user,
+        }
+    
+    return render(request, 'registration/user_settings.html', context)
