@@ -82,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         "NAME": "academix_db",
         'USER': 'root',
-        "PASSWORD": "king",  
+        "PASSWORD": "",  
         "HOST": "localhost",
         "PORT": "3306",
         "option": {
@@ -129,7 +129,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [
-    BASE_DIR / "apps/core/static",
+    BASE_DIR / "apps"/"core"/"static",
 ]
 
 # Media files
