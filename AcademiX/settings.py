@@ -82,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         "NAME": "academix_db",
         'USER': 'root',
-        "PASSWORD": "",  
+        "PASSWORD": "king",  
         "HOST": "localhost",
         "PORT": "3306",
         "option": {

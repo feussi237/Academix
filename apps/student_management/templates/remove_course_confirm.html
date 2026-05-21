@@ -1,0 +1,69 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>Remove Course</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'students:student_list' %}">Students</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'students:student_detail' student.pk %}">{{ student }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'students:student_courses' student.pk %}">Courses</a></li>
+        <li class="breadcrumb-item active">Remove</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-6 offset-lg-3">
+
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Confirm Remove Course</h5>
+
+            <div class="alert alert-warning" role="alert">
+              <i class="bi bi-exclamation-triangle"></i>
+              <strong>Warning!</strong> This will remove the student from the course.
+            </div>
+
+            <p>Are you sure you want to remove <strong>{{ student.first_name }} {{ student.last_name }}</strong> from the following course?</p>
+            
+            <div class="card border-danger mb-3">
+              <div class="card-body">
+                <h6 class="card-title">{{ student_course.course.code }} - {{ student_course.course.name }}</h6>
+                <p class="card-text">
+                  <small>
+                    <strong>Enrollment Date:</strong> {{ student_course.enrollment_date|date:"M d, Y" }}<br>
+                    <strong>Status:</strong> {{ student_course.get_status_display }}<br>
+                    <strong>Current Grade:</strong> {{ student_course.grade|default:"Not graded" }}<br>
+                    <strong>Score:</strong> {{ student_course.score|default:"N/A" }}
+                  </small>
+                </p>
+              </div>
+            </div>
+
+            <form method="post">
+              {% csrf_token %}
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-danger">
+                  <i class="bi bi-trash"></i> Remove Course
+                </button>
+                <a href="{% url 'students:student_courses' student.pk %}" class="btn btn-secondary">
+                  <i class="bi bi-x-circle"></i> Cancel
+                </a>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+{% endblock %}

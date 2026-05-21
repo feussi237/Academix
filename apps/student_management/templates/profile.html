@@ -308,6 +308,75 @@
                     </div>
                 </div>
 
+                <!-- Enrolled Courses Section -->
+                <div class="card info-card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0"><i class="bi bi-book me-2"></i>Enrolled Courses</h5>
+                        <a href="{% url 'students:add_course_to_student' student.pk %}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-plus-circle"></i> Add Course
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        {% if student_courses %}
+                            <div class="table-responsive">
+                                <table class="table table-sm table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Code</th>
+                                            <th>Course Name</th>
+                                            <th>Score</th>
+                                            <th>Grade</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for sc in student_courses %}
+                                        <tr>
+                                            <td><strong>{{ sc.course.code }}</strong></td>
+                                            <td>{{ sc.course.name }}</td>
+                                            <td>
+                                                {% if sc.score %}
+                                                    {{ sc.score }}/100
+                                                {% else %}
+                                                    <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if sc.grade %}
+                                                    <span class="badge bg-info">{{ sc.grade }}</span>
+                                                {% else %}
+                                                    <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if sc.status == 'active' %}
+                                                    <span class="badge bg-success">Active</span>
+                                                {% elif sc.status == 'completed' %}
+                                                    <span class="badge bg-info">Completed</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning">Dropped</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mt-2">
+                                <a href="{% url 'students:student_courses' student.pk %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-eye"></i> View All Courses
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info mb-0">
+                                <i class="bi bi-info-circle"></i>
+                                No courses enrolled yet.
+                                <a href="{% url 'students:add_course_to_student' student.pk %}">Enroll in a course</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
                 <!-- Notes Section -->
                 <div class="card info-card mb-4">
                     <div class="card-header">

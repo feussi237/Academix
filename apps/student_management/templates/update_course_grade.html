@@ -1,0 +1,105 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+<main id="main" class="main">
+
+  <div class="pagetitle">
+    <h1>{{ title }}</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'core:dashboard' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'students:student_list' %}">Students</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'students:student_detail' student.pk %}">{{ student }}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'students:student_courses' student.pk %}">Courses</a></li>
+        <li class="breadcrumb-item active">{{ title }}</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section">
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2">
+
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ title }}</h5>
+
+            {% if messages %}
+              {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+              {% endfor %}
+            {% endif %}
+
+            <!-- Course Info -->
+            <div class="card border-info mb-4">
+              <div class="card-body">
+                <h6 class="card-title">{{ student_course.course.code }} - {{ student_course.course.name }}</h6>
+                <p class="card-text">
+                  <small>
+                    <strong>Student:</strong> {{ student.first_name }} {{ student.last_name }}<br>
+                    <strong>Enrollment Date:</strong> {{ student_course.enrollment_date|date:"M d, Y" }}<br>
+                    <strong>Current Status:</strong> {{ student_course.get_status_display }}
+                  </small>
+                </p>
+              </div>
+            </div>
+
+            <!-- Form -->
+            <form method="post" novalidate class="needs-validation">
+              {% csrf_token %}
+
+              {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                  {{ form.non_field_errors }}
+                </div>
+              {% endif %}
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="{{ form.score.id_for_label }}" class="form-label">{{ form.score.label }}</label>
+                  {{ form.score }}
+                  {% if form.score.errors %}
+                    <div class="alert alert-danger mt-2">{{ form.score.errors }}</div>
+                  {% endif %}
+                  <small class="text-muted">Enter score between 0-100</small>
+                </div>
+                <div class="col-md-6">
+                  <label for="{{ form.grade.id_for_label }}" class="form-label">{{ form.grade.label }}</label>
+                  {{ form.grade }}
+                  {% if form.grade.errors %}
+                    <div class="alert alert-danger mt-2">{{ form.grade.errors }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="{{ form.status.id_for_label }}" class="form-label">{{ form.status.label }}</label>
+                {{ form.status }}
+                {% if form.status.errors %}
+                  <div class="alert alert-danger mt-2">{{ form.status.errors }}</div>
+                {% endif %}
+              </div>
+
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check-circle"></i> Update Grade
+                </button>
+                <a href="{% url 'students:student_courses' student.pk %}" class="btn btn-secondary">
+                  <i class="bi bi-x-circle"></i> Cancel
+                </a>
+              </div>
+            </form><!-- End Form -->
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+{% endblock %}
